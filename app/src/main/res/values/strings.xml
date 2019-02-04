@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Oh No, Snow!</string>
+    <string name="snowtifications">Snowtifications</string>
+    <string-array name="choices_array">
+        <item>Off</item>
+        <item>Snow Only</item>
+        <item>Always</item>
+    </string-array>
+</resources>
