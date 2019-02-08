@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Oh No, Snow!</string>
     <string name="snowtifications">Snowtifications</string>
+    <string name="location_permission_rationale">This app requires Location Permission to function</string>
+    <string name="ok">Ok</string>
+    <string name="location_permission_not_granted">Location Permission has not been granted!</string>
+    <string name="tap_to_continue">Tap to continue</string>
     <string-array name="choices_array">
         <item>Off</item>
         <item>Snow Only</item>
