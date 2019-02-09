@@ -1,4 +1,4 @@
-package com.github.rstockbridge.ohnosnow;
+package com.github.rstockbridge.ohnosnow.activities;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -14,13 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.github.rstockbridge.ohnosnow.utils.LocationPermissionNotificationUtil;
+import com.github.rstockbridge.ohnosnow.R;
+import com.github.rstockbridge.ohnosnow.notifications.LocationPermissionNotification;
+import com.github.rstockbridge.ohnosnow.utils.LocationUtil;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class MainActivity extends AppCompatActivity {
 
     private LocationPermissionReceiver receiver = new LocationPermissionReceiver();
+    private LocationUtil locationUtil;
 
     private TextView label;
     private Spinner spinner;
@@ -36,8 +39,12 @@ public class MainActivity extends AppCompatActivity {
         initializeViews();
         syncViewsWithLocationPermission();
 
+        locationUtil = new LocationUtil(this);
+
         if (!locationPermissionsAreGranted()) {
-            LocationPermissionNotificationUtil.sendNotification(this);
+            LocationPermissionNotification.sendNotification(this);
+        } else {
+            locationUtil.requestLocation(this);
         }
     }
 
@@ -80,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
                 switch (intentAction) {
                     case LocationPermissionActivity.ACTION_LOCATION_PERMISSION_BROADCAST:
                         syncViewsWithLocationPermission();
-                        if(locationPermissionsAreGranted()) {
-
+                        if (locationPermissionsAreGranted()) {
+                            locationUtil.requestLocation(MainActivity.this);
                         }
                         break;
                     default:

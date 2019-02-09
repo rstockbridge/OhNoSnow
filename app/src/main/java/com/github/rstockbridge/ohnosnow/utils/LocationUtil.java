@@ -1,0 +1,116 @@
+package com.github.rstockbridge.ohnosnow.utils;
+
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.location.Location;
+import android.os.Looper;
+import android.support.annotation.NonNull;
+
+import com.github.rstockbridge.ohnosnow.notifications.LocationNotification;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+public class LocationUtil {
+
+    private FusedLocationProviderClient fusedLocationClient;
+
+    private LocationRequest locationRequest = new LocationRequest()
+            .setInterval(SECONDS.toMillis(15))
+            .setFastestInterval(SECONDS.toMillis(5))
+            .setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY)
+            .setExpirationDuration(SECONDS.toMillis(60));
+    // no easy way to know if the location request expires without returning a location
+
+    private LocationCallback locationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(final LocationResult locationResult) {
+            if (locationResult == null) {
+                LocationNotification.sendNotification(context);
+                return;
+            }
+
+            final Location location = locationResult.getLastLocation();
+            if (location == null) {
+                LocationNotification.sendNotification(context);
+                return;
+            }
+
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+            // todo - fetch weather forecast for location
+        }
+    };
+
+    @NonNull
+    private final Context context;
+
+    public LocationUtil(@NonNull final Context context) {
+        this.context = context;
+    }
+
+    @SuppressLint("MissingPermission")
+    public void requestLocation(@NonNull final Context context) {
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+
+        fusedLocationClient
+                .getLastLocation()
+                .addOnSuccessListener(new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(final Location location) {
+                        if (location != null) {
+                            // todo - fetch weather forecast for location
+                        } else {
+                            getFreshLocation();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull final Exception e) {
+                        getFreshLocation();
+                    }
+                });
+    }
+
+    private void getFreshLocation() {
+        final LocationSettingsRequest settingsRequest = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest)
+                .build();
+
+        final SettingsClient client = LocationServices.getSettingsClient(context);
+        client.checkLocationSettings(settingsRequest)
+                .addOnSuccessListener(new OnSuccessListener<LocationSettingsResponse>() {
+                    @Override
+                    public void onSuccess(final LocationSettingsResponse locationSettingsResponse) {
+                        if (locationSettingsResponse == null) {
+                            LocationNotification.sendNotification(context);
+                        } else {
+                            startLocationUpdates();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull final Exception e) {
+                        LocationNotification.sendNotification(context);
+                    }
+                });
+    }
+
+    @SuppressLint("MissingPermission")
+    private void startLocationUpdates() {
+        fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
+    }
+}

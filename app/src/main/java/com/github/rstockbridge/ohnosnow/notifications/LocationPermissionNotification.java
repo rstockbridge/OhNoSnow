@@ -1,22 +1,22 @@
-package com.github.rstockbridge.ohnosnow.utils;
+package com.github.rstockbridge.ohnosnow.notifications;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
-import com.github.rstockbridge.ohnosnow.LocationPermissionActivity;
+import com.github.rstockbridge.ohnosnow.activities.LocationPermissionActivity;
 import com.github.rstockbridge.ohnosnow.R;
+import com.github.rstockbridge.ohnosnow.utils.NotificationChannelUtil;
 
-public class LocationPermissionNotificationUtil {
+public class LocationPermissionNotification {
 
     private static final int NOTIFICATION_ID = 6192;
 
     private static NotificationCompat.Builder getNotificationBuilder(@NonNull final Context context) {
-        return new NotificationCompat.Builder(context, NotificationUtil.PRIMARY_CHANNEL_ID)
+        return new NotificationCompat.Builder(context, NotificationChannelUtil.PRIMARY_CHANNEL_ID)
                 .setContentTitle(context.getString(R.string.location_permission_not_granted))
                 .setContentText(context.getString(R.string.tap_to_continue))
                 .setSmallIcon(R.drawable.ic_error)
@@ -27,7 +27,7 @@ public class LocationPermissionNotificationUtil {
         final NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationUtil.createNotificationChannel(notificationManager);
+        NotificationChannelUtil.createNotificationChannel(notificationManager);
 
         final Intent locationPermissionIntent = new Intent(context, LocationPermissionActivity.class);
         locationPermissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -1,4 +1,4 @@
-package com.github.rstockbridge.ohnosnow;
+package com.github.rstockbridge.ohnosnow.activities;
 
 import android.Manifest;
 import android.content.Intent;
@@ -7,6 +7,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+
+import com.github.rstockbridge.ohnosnow.BuildConfig;
+import com.github.rstockbridge.ohnosnow.R;
 
 import java.util.List;
 
@@ -31,6 +34,7 @@ public class LocationPermissionActivity
         requestLocationPermissions();
     }
 
+    @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
