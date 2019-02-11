@@ -17,7 +17,7 @@ import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
-public class LocationPermissionActivity
+public final class LocationPermissionActivity
         extends AppCompatActivity
         implements EasyPermissions.PermissionCallbacks {
 

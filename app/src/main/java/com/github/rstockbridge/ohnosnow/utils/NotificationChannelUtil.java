@@ -7,7 +7,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.NonNull;
 
-public class NotificationChannelUtil {
+public final class NotificationChannelUtil {
     public static final String PRIMARY_CHANNEL_ID = "primaryNotificationChannel";
 
     private static NotificationChannel notificationChannel = null;

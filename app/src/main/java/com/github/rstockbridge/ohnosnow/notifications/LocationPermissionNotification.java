@@ -11,7 +11,7 @@ import com.github.rstockbridge.ohnosnow.activities.LocationPermissionActivity;
 import com.github.rstockbridge.ohnosnow.R;
 import com.github.rstockbridge.ohnosnow.utils.NotificationChannelUtil;
 
-public class LocationPermissionNotification {
+public final class LocationPermissionNotification {
 
     private static final int NOTIFICATION_ID = 6192;
 

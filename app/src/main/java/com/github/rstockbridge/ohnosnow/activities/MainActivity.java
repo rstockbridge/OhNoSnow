@@ -20,7 +20,7 @@ import com.github.rstockbridge.ohnosnow.utils.LocationUtil;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity {
 
     private LocationPermissionReceiver receiver = new LocationPermissionReceiver();
     private LocationUtil locationUtil;

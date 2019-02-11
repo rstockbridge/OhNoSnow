@@ -8,7 +8,7 @@ import android.support.v4.app.NotificationCompat;
 import com.github.rstockbridge.ohnosnow.R;
 import com.github.rstockbridge.ohnosnow.utils.NotificationChannelUtil;
 
-public class LocationNotification {
+public final class LocationNotification {
 
     private static final int NOTIFICATION_ID = 3913;
 

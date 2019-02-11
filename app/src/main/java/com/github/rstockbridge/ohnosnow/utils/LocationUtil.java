@@ -20,7 +20,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-public class LocationUtil {
+public final class LocationUtil {
 
     private FusedLocationProviderClient fusedLocationClient;
 
