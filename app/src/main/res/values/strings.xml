@@ -10,9 +10,4 @@
     <string name="uh_oh">Uh oh!</string>
     <string name="failed_weather_data">Failed to retrieve weather data :(</string>
     <string name="weather_update">Weather Update</string>
-    <string-array name="choices_array">
-        <item>Off</item>
-        <item>Snow Only</item>
-        <item>Always</item>
-    </string-array>
 </resources>

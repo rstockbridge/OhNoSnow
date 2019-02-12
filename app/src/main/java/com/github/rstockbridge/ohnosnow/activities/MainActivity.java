@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -23,12 +24,15 @@ import com.github.rstockbridge.ohnosnow.api.models.ForecastData;
 import com.github.rstockbridge.ohnosnow.notifications.LocationPermissionNotification;
 import com.github.rstockbridge.ohnosnow.notifications.WeatherNotification;
 import com.github.rstockbridge.ohnosnow.utils.LocationUtil;
+import com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.*;
+
 public final class MainActivity
         extends AppCompatActivity
-        implements LocationUtil.LocationSuccessListener {
+        implements LocationUtil.LocationSuccessListener, AdapterView.OnItemSelectedListener {
 
     private LocationPermissionReceiver receiver = new LocationPermissionReceiver();
 
@@ -38,7 +42,12 @@ public final class MainActivity
         @Override
         public void onSuccess(@NonNull final ForecastData result) {
             final double snowInInches = result.get12HourSnowInInches();
-            WeatherNotification.sendForecastNotification(MainActivity.this, snowInInches);
+
+            final NotificationPref notificationPref = getNotificationPref(MainActivity.this);
+            if ((notificationPref == NotificationPref.SNOW_AND_FAILURE_ONLY && snowInInches > 0)
+                    || notificationPref == NotificationPref.ALL) {
+                WeatherNotification.sendForecastNotification(MainActivity.this, snowInInches);
+            }
         }
 
         @Override
@@ -71,7 +80,9 @@ public final class MainActivity
         if (!locationPermissionsAreGranted()) {
             LocationPermissionNotification.sendNotification(this);
         } else {
-            locationUtil.requestLocation(this, this);
+            if (getNotificationPref(this) != NotificationPref.NONE) {
+                locationUtil.requestLocation(this, this);
+            }
         }
     }
 
@@ -79,6 +90,17 @@ public final class MainActivity
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
+    }
+
+    @Override
+    public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
+        final NotificationPref selectedNotificationPref = (NotificationPref) parent.getSelectedItem();
+        SharedPreferenceHelper.setNotificationPref(this, selectedNotificationPref);
+    }
+
+    @Override
+    public void onNothingSelected(final AdapterView<?> parent) {
+        // this method intentionally left blank
     }
 
     @Override
@@ -90,9 +112,14 @@ public final class MainActivity
         label = findViewById(R.id.label);
 
         spinner = findViewById(R.id.spinner);
-        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.choices_array, R.layout.spinner_item);
+
+        final ArrayAdapter<NotificationPref> adapter =
+                new ArrayAdapter<>(this, R.layout.spinner_item, NotificationPref.values());
         adapter.setDropDownViewResource(R.layout.spinner_item);
         spinner.setAdapter(adapter);
+
+        spinner.setSelection(getNotificationPref(this).ordinal());
+        spinner.setOnItemSelectedListener(this);
     }
 
     private boolean locationPermissionsAreGranted() {
