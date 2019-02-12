@@ -12,6 +12,9 @@ public final class NotificationChannelUtil {
 
     private static NotificationChannel notificationChannel = null;
 
+    private NotificationChannelUtil() {
+    }
+
     @SuppressLint("NewApi")
     public static void createNotificationChannel(@NonNull final NotificationManager notificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && NotificationChannelUtil.notificationChannel == null) {
