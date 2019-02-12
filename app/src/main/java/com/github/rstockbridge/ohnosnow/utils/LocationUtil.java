@@ -22,6 +22,12 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 public final class LocationUtil {
 
+    public interface LocationSuccessListener {
+        void onLocationSuccess(@NonNull final String latitude, @NonNull final String longitude);
+    }
+
+    private LocationSuccessListener listener;
+
     private FusedLocationProviderClient fusedLocationClient;
 
     private LocationRequest locationRequest = new LocationRequest()
@@ -46,19 +52,20 @@ public final class LocationUtil {
             }
 
             fusedLocationClient.removeLocationUpdates(locationCallback);
-            // todo - fetch weather forecast for location
+            listener.onLocationSuccess(getLatitudeAsString(location), getLongitudeAsString(location));
         }
     };
 
     @NonNull
     private final Context context;
 
-    public LocationUtil(@NonNull final Context context) {
+    public LocationUtil(@NonNull final Context context, @NonNull final LocationSuccessListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     @SuppressLint("MissingPermission")
-    public void requestLocation(@NonNull final Context context) {
+    public void requestLocation(@NonNull final Context context, @NonNull final LocationSuccessListener listener) {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
 
         fusedLocationClient
@@ -67,7 +74,7 @@ public final class LocationUtil {
                     @Override
                     public void onSuccess(final Location location) {
                         if (location != null) {
-                            // todo - fetch weather forecast for location
+                            listener.onLocationSuccess(getLatitudeAsString(location), getLongitudeAsString(location));
                         } else {
                             getFreshLocation();
                         }
@@ -92,7 +99,7 @@ public final class LocationUtil {
                     @Override
                     public void onSuccess(final LocationSettingsResponse locationSettingsResponse) {
                         if (locationSettingsResponse == null) {
-                            LocationFailureNotification.sendNotification(context, true);
+                            LocationFailureNotification.sendNotification(context, false);
                         } else {
                             startLocationUpdates();
                         }
@@ -112,5 +119,13 @@ public final class LocationUtil {
                 locationRequest,
                 locationCallback,
                 Looper.getMainLooper());
+    }
+
+    private String getLatitudeAsString(@NonNull final Location location) {
+        return Double.toString(location.getLatitude());
+    }
+
+    private String getLongitudeAsString(@NonNull final Location location) {
+        return Double.toString(location.getLongitude());
     }
 }

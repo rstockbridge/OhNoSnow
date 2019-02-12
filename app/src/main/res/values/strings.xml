@@ -7,6 +7,9 @@
     <string name="location_failed">Could not determine location!</string>
     <string name="location_off">Location is turned off</string>
     <string name="tap_to_continue">Tap to continue</string>
+    <string name="uh_oh">Uh oh!</string>
+    <string name="failed_weather_data">Failed to retrieve weather data :(</string>
+    <string name="weather_update">Weather Update</string>
     <string-array name="choices_array">
         <item>Off</item>
         <item>Snow Only</item>

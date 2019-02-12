@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,16 +15,42 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.github.rstockbridge.ohnosnow.BuildConfig;
 import com.github.rstockbridge.ohnosnow.R;
+import com.github.rstockbridge.ohnosnow.api.DarkSkyApi;
+import com.github.rstockbridge.ohnosnow.api.MyCallback;
+import com.github.rstockbridge.ohnosnow.api.models.ForecastData;
 import com.github.rstockbridge.ohnosnow.notifications.LocationPermissionNotification;
+import com.github.rstockbridge.ohnosnow.notifications.WeatherNotification;
 import com.github.rstockbridge.ohnosnow.utils.LocationUtil;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public final class MainActivity extends AppCompatActivity {
+public final class MainActivity
+        extends AppCompatActivity
+        implements LocationUtil.LocationSuccessListener {
 
     private LocationPermissionReceiver receiver = new LocationPermissionReceiver();
+
     private LocationUtil locationUtil;
+
+    private MyCallback<ForecastData> myCallback = new MyCallback<ForecastData>() {
+        @Override
+        public void onSuccess(@NonNull final ForecastData result) {
+            final double snowInInches = result.get12HourSnowInInches();
+            WeatherNotification.sendForecastNotification(MainActivity.this, snowInInches);
+        }
+
+        @Override
+        public void onError() {
+            WeatherNotification.sendFailureNotification(MainActivity.this);
+        }
+
+        @Override
+        public void onFailure() {
+            WeatherNotification.sendFailureNotification(MainActivity.this);
+        }
+    };
 
     private TextView label;
     private Spinner spinner;
@@ -39,12 +66,12 @@ public final class MainActivity extends AppCompatActivity {
         initializeViews();
         syncViewsWithLocationPermission();
 
-        locationUtil = new LocationUtil(this);
+        locationUtil = new LocationUtil(this, this);
 
         if (!locationPermissionsAreGranted()) {
             LocationPermissionNotification.sendNotification(this);
         } else {
-            locationUtil.requestLocation(this);
+            locationUtil.requestLocation(this, this);
         }
     }
 
@@ -52,6 +79,11 @@ public final class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onDestroy();
+    }
+
+    @Override
+    public void onLocationSuccess(@NonNull final String latitude, @NonNull final String longitude) {
+        DarkSkyApi.getSharedInstance().fetchForecast(BuildConfig.DARK_SKY_KEY, latitude, longitude, myCallback);
     }
 
     private void initializeViews() {
@@ -88,7 +120,7 @@ public final class MainActivity extends AppCompatActivity {
                     case LocationPermissionActivity.ACTION_LOCATION_PERMISSION_BROADCAST:
                         syncViewsWithLocationPermission();
                         if (locationPermissionsAreGranted()) {
-                            locationUtil.requestLocation(MainActivity.this);
+                            locationUtil.requestLocation(MainActivity.this, MainActivity.this);
                         }
                         break;
                     default:
