@@ -6,7 +6,7 @@ import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
-import com.github.rstockbridge.ohnosnow.notifications.LocationNotification;
+import com.github.rstockbridge.ohnosnow.notifications.LocationFailureNotification;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -35,13 +35,13 @@ public final class LocationUtil {
         @Override
         public void onLocationResult(final LocationResult locationResult) {
             if (locationResult == null) {
-                LocationNotification.sendNotification(context);
+                LocationFailureNotification.sendNotification(context, false);
                 return;
             }
 
             final Location location = locationResult.getLastLocation();
             if (location == null) {
-                LocationNotification.sendNotification(context);
+                LocationFailureNotification.sendNotification(context, false);
                 return;
             }
 
@@ -92,7 +92,7 @@ public final class LocationUtil {
                     @Override
                     public void onSuccess(final LocationSettingsResponse locationSettingsResponse) {
                         if (locationSettingsResponse == null) {
-                            LocationNotification.sendNotification(context);
+                            LocationFailureNotification.sendNotification(context, true);
                         } else {
                             startLocationUpdates();
                         }
@@ -101,7 +101,7 @@ public final class LocationUtil {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull final Exception e) {
-                        LocationNotification.sendNotification(context);
+                        LocationFailureNotification.sendNotification(context, false);
                     }
                 });
     }
