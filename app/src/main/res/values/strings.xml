@@ -10,4 +10,5 @@
     <string name="uh_oh">Uh oh!</string>
     <string name="failed_weather_data">Failed to retrieve weather data :(</string>
     <string name="weather_update">Weather Update</string>
+    <string name="powered_by_dark_sky">Powered by Dark Sky.</string>
 </resources>
