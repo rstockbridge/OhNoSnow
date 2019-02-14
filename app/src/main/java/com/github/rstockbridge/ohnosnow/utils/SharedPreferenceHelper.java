@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
-import com.github.rstockbridge.ohnosnow.activities.MainActivity;
-
 public class SharedPreferenceHelper {
 
     public enum NotificationPref {

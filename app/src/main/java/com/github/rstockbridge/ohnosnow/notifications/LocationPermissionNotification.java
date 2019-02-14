@@ -7,8 +7,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
-import com.github.rstockbridge.ohnosnow.activities.LocationPermissionActivity;
 import com.github.rstockbridge.ohnosnow.R;
+import com.github.rstockbridge.ohnosnow.activities.LocationPermissionActivity;
 import com.github.rstockbridge.ohnosnow.utils.NotificationChannelUtil;
 
 public final class LocationPermissionNotification {

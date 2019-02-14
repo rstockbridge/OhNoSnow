@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,7 +30,8 @@ import com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.*;
+import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.NotificationPref;
+import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.getNotificationPref;
 
 public final class MainActivity
         extends AppCompatActivity
