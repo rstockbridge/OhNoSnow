@@ -38,7 +38,7 @@ public final class WeatherNotification {
 
         NotificationChannelUtil.createNotificationChannel(notificationManager);
 
-        final String contentString = snowInInches > 0 ? snowInInches + "\" of snow overnight" : "No overnight snow";
+        final String contentString = snowInInches > 0 ? snowInInches + "\" of snow overnight." : "No overnight snow.";
 
         final NotificationCompat.Builder notificationBuilder = getForecastNotificationBuilder(context, contentString);
         notificationManager.notify(FORECAST_NOTIFICATION_ID, notificationBuilder.build());
