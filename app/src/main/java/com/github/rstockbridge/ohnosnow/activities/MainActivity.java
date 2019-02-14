@@ -161,7 +161,7 @@ public final class MainActivity
                 switch (intentAction) {
                     case LocationPermissionActivity.ACTION_LOCATION_PERMISSION_BROADCAST:
                         syncViewsWithLocationPermission();
-                        if (locationPermissionsAreGranted()) {
+                        if (getNotificationPref(MainActivity.this) != NotificationPref.NONE) {
                             locationUtil.requestLocation(MainActivity.this, MainActivity.this);
                         }
                         break;
