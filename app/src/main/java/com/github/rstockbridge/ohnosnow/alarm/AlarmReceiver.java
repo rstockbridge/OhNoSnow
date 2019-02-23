@@ -35,7 +35,7 @@ public class AlarmReceiver
                 final double snowInInches = result.get12HourSnowInInches();
 
                 final NotificationPref notificationPref = getNotificationPref(context);
-                if ((notificationPref == NotificationPref.SNOW_AND_FAILURE_ONLY && snowInInches > 0)
+                if ((notificationPref == NotificationPref.SNOW_AND_FAILURE_ONLY && snowInInches > 0.75)
                         || notificationPref == NotificationPref.ALL) {
                     WeatherNotification.sendForecastNotification(context, snowInInches);
                 }
