@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 
 import com.github.rstockbridge.ohnosnow.notifications.LocationFailureNotification;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -108,7 +109,8 @@ public final class LocationUtil {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull final Exception e) {
-                        LocationFailureNotification.sendNotification(context, false);
+                        // if (e instanceof ResolvableApiException) then location is turned off
+                        LocationFailureNotification.sendNotification(context, e instanceof ResolvableApiException);
                     }
                 });
     }

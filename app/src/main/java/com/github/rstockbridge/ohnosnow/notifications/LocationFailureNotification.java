@@ -32,7 +32,7 @@ public final class LocationFailureNotification {
 
         NotificationChannelUtil.createNotificationChannel(notificationManager);
 
-        final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(context, true);
+        final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(context, locationIsOff);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 }
