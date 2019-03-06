@@ -43,19 +43,24 @@ public class AlarmHelper {
 
     public static void cancelAlarm(@NonNull final Context context) {
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        alarmManager.cancel(getPendingIntent(context));
-
+        final PendingIntent pendingIntent = getPendingIntent(context);
+        alarmManager.cancel(pendingIntent);
+        pendingIntent.cancel();
     }
 
     private static boolean alarmExists(@NonNull final Context context) {
         final Intent alarmReceiverIntent = AlarmReceiver.getAlarmReceiverIntent(context);
-        return (PendingIntent.getBroadcast(context, PENDING_INTENT_REQUEST_CODE, alarmReceiverIntent, PendingIntent.FLAG_NO_CREATE) != null);
+        return PendingIntent
+                .getBroadcast(
+                        context,
+                        PENDING_INTENT_REQUEST_CODE,
+                        alarmReceiverIntent,
+                        PendingIntent.FLAG_NO_CREATE)
+                != null;
     }
 
     private static PendingIntent getPendingIntent(@NonNull final Context context) {
         final Intent alarmReceiverIntent = AlarmReceiver.getAlarmReceiverIntent(context);
         return PendingIntent.getBroadcast(context, PENDING_INTENT_REQUEST_CODE, alarmReceiverIntent, 0);
     }
-
-
 }
