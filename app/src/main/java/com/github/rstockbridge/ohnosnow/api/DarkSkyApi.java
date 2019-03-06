@@ -47,7 +47,7 @@ public final class DarkSkyApi {
 
             @Override
             public void onFailure(final Call<ForecastData> call, final Throwable t) {
-                myCallback.onFailure();
+                myCallback.onFailure(t);
             }
         });
     }

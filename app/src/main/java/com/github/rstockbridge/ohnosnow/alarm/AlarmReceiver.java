@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.crashlytics.android.Crashlytics;
 import com.github.rstockbridge.ohnosnow.BuildConfig;
 import com.github.rstockbridge.ohnosnow.api.DarkSkyApi;
 import com.github.rstockbridge.ohnosnow.api.MyCallback;
@@ -47,7 +48,8 @@ public class AlarmReceiver
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(@NonNull final Throwable t) {
+                Crashlytics.logException(t);
                 WeatherNotification.sendFailureNotification(context);
             }
         };

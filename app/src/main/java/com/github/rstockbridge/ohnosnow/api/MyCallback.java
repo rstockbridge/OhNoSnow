@@ -4,9 +4,9 @@ import android.support.annotation.NonNull;
 
 public interface MyCallback<T> {
 
-    void onSuccess(@NonNull T result);
+    void onSuccess(@NonNull final T result);
 
     void onError();
 
-    void onFailure();
+    void onFailure(@NonNull final Throwable t);
 }

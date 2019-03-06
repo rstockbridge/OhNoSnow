@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "8051662307",
+    "firebase_url": "https://ohnosnow-d8be0.firebaseio.com",
+    "project_id": "ohnosnow-d8be0",
+    "storage_bucket": "ohnosnow-d8be0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:8051662307:android:17d0fa06e1365ba7",
+        "android_client_info": {
+          "package_name": "com.github.rstockbridge.ohnosnow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "8051662307-3hcpnub7m62vhvolv8h8tb2a1ldn5ak7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.rstockbridge.ohnosnow",
+            "certificate_hash": "92be72a1720125eb1755f269687f03ec2852bbae"
+          }
+        },
+        {
+          "client_id": "8051662307-55od7psr72enh04krrnt6h78qtpuhb81.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1WI5__MiXBM0RbVw3asRUF30tFbjxi8w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "8051662307-55od7psr72enh04krrnt6h78qtpuhb81.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
