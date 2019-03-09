@@ -1,12 +1,19 @@
 package com.github.rstockbridge.ohnosnow.utils;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 
+import com.github.rstockbridge.ohnosnow.activities.LocationPermissionActivity;
+import com.github.rstockbridge.ohnosnow.activities.LocationSettingsActivity;
 import com.github.rstockbridge.ohnosnow.notifications.LocationFailureNotification;
+import com.github.rstockbridge.ohnosnow.notifications.LocationSettingsNotification;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -19,6 +26,7 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import static com.github.rstockbridge.ohnosnow.activities.LocationSettingsActivity.EXTRA_LOCATION_ON;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public final class LocationUtil {
@@ -42,13 +50,13 @@ public final class LocationUtil {
         @Override
         public void onLocationResult(final LocationResult locationResult) {
             if (locationResult == null) {
-                LocationFailureNotification.sendNotification(context, false);
+                LocationFailureNotification.sendNotification(context);
                 return;
             }
 
             final Location location = locationResult.getLastLocation();
             if (location == null) {
-                LocationFailureNotification.sendNotification(context, false);
+                LocationFailureNotification.sendNotification(context);
                 return;
             }
 
@@ -100,7 +108,7 @@ public final class LocationUtil {
                     @Override
                     public void onSuccess(final LocationSettingsResponse locationSettingsResponse) {
                         if (locationSettingsResponse == null) {
-                            LocationFailureNotification.sendNotification(context, false);
+                            LocationFailureNotification.sendNotification(context);
                         } else {
                             startLocationUpdates();
                         }
@@ -109,8 +117,12 @@ public final class LocationUtil {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull final Exception e) {
-                        // if (e instanceof ResolvableApiException) then location is turned off
-                        LocationFailureNotification.sendNotification(context, e instanceof ResolvableApiException);
+                        if (e instanceof ResolvableApiException) {
+                            setupLocationSettingsReceiver();
+                            LocationSettingsNotification.sendNotification(context, ((ResolvableApiException) e).getResolution());
+                        } else {
+                            LocationFailureNotification.sendNotification(context);
+                        }
                     }
                 });
     }
@@ -129,5 +141,34 @@ public final class LocationUtil {
 
     private String getLongitudeAsString(@NonNull final Location location) {
         return Double.toString(location.getLongitude());
+    }
+
+    private void setupLocationSettingsReceiver() {
+        final LocationSettingsReceiver receiver = new LocationSettingsReceiver();
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver,
+                new IntentFilter(LocationPermissionActivity.ACTION_LOCATION_PERMISSION_BROADCAST));
+
+    }
+
+    public class LocationSettingsReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(final Context context, final Intent intent) {
+            final String intentAction = intent.getAction();
+
+            if (intentAction != null) {
+                switch (intentAction) {
+                    case LocationSettingsActivity.ACTION_LOCATION_SETTINGS_BROADCAST:
+                        final boolean locationOn = intent.getBooleanExtra(EXTRA_LOCATION_ON, true);
+                        if (locationOn) {
+                            startLocationUpdates();
+                        }
+                        break;
+
+                    default:
+                        throw new IllegalStateException("This line should not be reached.");
+                }
+            }
+        }
     }
 }

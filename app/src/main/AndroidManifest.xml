@@ -27,6 +27,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity="" />
+        <activity
+            android:name=".activities.LocationSettingsActivity"
+            android:excludeFromRecents="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:taskAffinity="" />
 
         <receiver
             android:name=".alarm.AlarmReceiver"

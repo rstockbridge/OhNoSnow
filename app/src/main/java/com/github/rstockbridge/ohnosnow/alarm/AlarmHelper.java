@@ -27,11 +27,11 @@ public class AlarmHelper {
     }
 
     public static void setAlarm(@NonNull final Context context) {
-        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-
         if (!alarmExists(context)) {
             final Calendar alarmCalendar = getAlarmCalendar();
             final PendingIntent pendingIntent = getPendingIntent(context);
+
+            final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
             alarmManager.setRepeating(
                     AlarmManager.RTC,

@@ -24,7 +24,7 @@ public final class LocationPermissionActivity
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 5713;
 
     public static final String ACTION_LOCATION_PERMISSION_BROADCAST =
-            BuildConfig.APPLICATION_ID + ".ACTION_LOCATION_PERMISSION_BROADCAST";
+            BuildConfig.APPLICATION_ID + ".ACTION_LOCATION_SETTINGS_BROADCAST";
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
