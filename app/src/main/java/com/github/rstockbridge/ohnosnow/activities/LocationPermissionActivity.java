@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.github.rstockbridge.ohnosnow.BuildConfig;
@@ -25,6 +24,7 @@ public final class LocationPermissionActivity
 
     public static final String ACTION_LOCATION_PERMISSION_BROADCAST =
             BuildConfig.APPLICATION_ID + ".ACTION_LOCATION_SETTINGS_BROADCAST";
+
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -94,8 +94,7 @@ public final class LocationPermissionActivity
     }
 
     private void myFinish() {
-        final Intent customBroadcastIntent = new Intent(ACTION_LOCATION_PERMISSION_BROADCAST);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(customBroadcastIntent);
+        setResult(RESULT_OK);
         finish();
     }
 }

@@ -1,14 +1,9 @@
 package com.github.rstockbridge.ohnosnow.activities;
 
-import android.Manifest;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,10 +14,8 @@ import android.widget.TextView;
 
 import com.github.rstockbridge.ohnosnow.R;
 import com.github.rstockbridge.ohnosnow.alarm.AlarmHelper;
-import com.github.rstockbridge.ohnosnow.notifications.LocationPermissionNotification;
+import com.github.rstockbridge.ohnosnow.utils.LocationPermissionUtil;
 import com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.NotificationPref;
 import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.NotificationPref.NONE;
@@ -32,7 +25,7 @@ public final class MainActivity
         extends AppCompatActivity
         implements AdapterView.OnItemSelectedListener {
 
-    private LocationPermissionReceiver receiver = new LocationPermissionReceiver();
+    private static final int REQUEST_CODE_LOCATION_PERMISSION_FLOW_COMPLETE = 1049;
 
     private TextView label;
     private Spinner spinner;
@@ -42,21 +35,28 @@ public final class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
-                new IntentFilter(LocationPermissionActivity.ACTION_LOCATION_PERMISSION_BROADCAST));
-
         initializeViews();
-        syncViewsWithLocationPermission();
 
-        if (!locationPermissionsAreGranted()) {
-            LocationPermissionNotification.sendNotification(this);
+        if (!LocationPermissionUtil.locationPermissionGranted(this)) {
+            final Intent intent = new Intent(this, LocationPermissionActivity.class);
+            startActivityForResult(intent, REQUEST_CODE_LOCATION_PERMISSION_FLOW_COMPLETE);
         }
     }
 
     @Override
-    protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
-        super.onDestroy();
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQUEST_CODE_LOCATION_PERMISSION_FLOW_COMPLETE:
+                if (resultCode == RESULT_OK) {
+                    syncViewsWithLocationPermission(LocationPermissionUtil.locationPermissionGranted(this));
+                }
+                break;
+
+            default:
+                throw new IllegalStateException("This line should not be reached.");
+        }
     }
 
     @Override
@@ -66,7 +66,7 @@ public final class MainActivity
 
         if (selectedNotificationPref == NONE) {
             AlarmHelper.cancelAlarm(this);
-        } else if (locationPermissionsAreGranted()) {
+        } else if (LocationPermissionUtil.locationPermissionGranted(this)) {
             AlarmHelper.setAlarm(this);
         }
     }
@@ -99,38 +99,15 @@ public final class MainActivity
                 startActivity(intent);
             }
         });
-
     }
 
-    private boolean locationPermissionsAreGranted() {
-        return EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION);
-    }
-
-    private void syncViewsWithLocationPermission() {
-        if (locationPermissionsAreGranted()) {
+    private void syncViewsWithLocationPermission(final boolean locationPermissionGranted) {
+        if (locationPermissionGranted) {
             label.setVisibility(View.VISIBLE);
             spinner.setVisibility(View.VISIBLE);
         } else {
             label.setVisibility(View.INVISIBLE);
             spinner.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public class LocationPermissionReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(final Context context, final Intent intent) {
-            final String intentAction = intent.getAction();
-
-            if (intentAction != null) {
-                switch (intentAction) {
-                    case LocationPermissionActivity.ACTION_LOCATION_PERMISSION_BROADCAST:
-                        syncViewsWithLocationPermission();
-                        break;
-                    default:
-                        throw new IllegalStateException("This line should not be reached.");
-                }
-            }
         }
     }
 }
