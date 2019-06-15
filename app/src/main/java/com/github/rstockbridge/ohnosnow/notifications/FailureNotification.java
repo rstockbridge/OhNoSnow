@@ -10,14 +10,11 @@ import androidx.core.app.NotificationCompat;
 
 import com.github.rstockbridge.ohnosnow.R;
 
-public final class WeatherNotification {
+public final class FailureNotification {
 
-    private static final int NOTIFICATION_ID = 4813;
+    private static final int NOTIFICATION_ID = 9174;
 
-    private static NotificationCompat.Builder getNotificationBuilder(
-            @NonNull final Context context,
-            @NonNull final String contentString) {
-
+    private static NotificationCompat.Builder getNotificationBuilder(@NonNull final Context context) {
         final PendingIntent emptyPendingIntent = PendingIntent.getActivity(
                 context,
                 0,
@@ -25,22 +22,20 @@ public final class WeatherNotification {
                 PendingIntent.FLAG_CANCEL_CURRENT);
 
         return new NotificationCompat.Builder(context, NotificationChannelUtil.PRIMARY_CHANNEL_ID)
-                .setContentTitle(context.getString(R.string.weather_update))
-                .setContentText(contentString)
+                .setContentTitle(context.getString(R.string.uh_oh))
+                .setContentText(context.getString(R.string.failed_weather_data))
                 .setSmallIcon(R.drawable.ic_app_icon)
                 .setAutoCancel(true)
                 .setContentIntent(emptyPendingIntent);
     }
 
-    public static void sendNotification(@NonNull final Context context, final double snowInInches) {
+    public static void sendNotification(@NonNull final Context context) {
         final NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationChannelUtil.createNotificationChannel(notificationManager);
 
-        final String contentString = snowInInches > 0 ? snowInInches + "\" of snow overnight." : "No overnight snow.";
-
-        final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(context, contentString);
+        final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(context);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 }

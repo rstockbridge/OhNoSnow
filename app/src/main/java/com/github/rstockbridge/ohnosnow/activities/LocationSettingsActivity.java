@@ -5,15 +5,12 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.rstockbridge.ohnosnow.BuildConfig;
 import com.github.rstockbridge.ohnosnow.R;
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.common.api.Status;
 
 public final class LocationSettingsActivity extends AppCompatActivity {
 
@@ -49,17 +46,14 @@ public final class LocationSettingsActivity extends AppCompatActivity {
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            case REQUEST_CODE_LOCATION_SETTINGS:
-                if (resultCode == Activity.RESULT_OK) {
-                    myFinish(true);
-                } else {
-                    myFinish(false);
-                }
-                break;
-
-            default:
-                throw new IllegalStateException("This line should not be reached.");
+        if (requestCode == REQUEST_CODE_LOCATION_SETTINGS) {
+            if (resultCode == Activity.RESULT_OK) {
+                myFinish(true);
+            } else {
+                myFinish(false);
+            }
+        } else {
+            throw new IllegalStateException("This line should not be reached.");
         }
     }
 

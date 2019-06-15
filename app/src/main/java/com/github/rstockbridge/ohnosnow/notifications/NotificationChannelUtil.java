@@ -1,14 +1,14 @@
-package com.github.rstockbridge.ohnosnow.utils;
+package com.github.rstockbridge.ohnosnow.notifications;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
-public final class NotificationChannelUtil {
-    public static final String PRIMARY_CHANNEL_ID = "primaryNotificationChannel";
+final class NotificationChannelUtil {
+    static final String PRIMARY_CHANNEL_ID = "primaryNotificationChannel";
 
     private static NotificationChannel notificationChannel = null;
 
@@ -16,7 +16,7 @@ public final class NotificationChannelUtil {
     }
 
     @SuppressLint("NewApi")
-    public static void createNotificationChannel(@NonNull final NotificationManager notificationManager) {
+    static void createNotificationChannel(@NonNull final NotificationManager notificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && NotificationChannelUtil.notificationChannel == null) {
             notificationChannel = new NotificationChannel(
                     NotificationChannelUtil.PRIMARY_CHANNEL_ID,

@@ -1,6 +1,6 @@
 package com.github.rstockbridge.ohnosnow.api.models;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 class Forecast {
 

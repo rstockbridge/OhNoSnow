@@ -4,7 +4,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.os.Build;
+
+import androidx.annotation.NonNull;
 
 import java.util.Calendar;
 
@@ -23,12 +25,17 @@ public class AlarmHelper {
         alarmCalendar.set(Calendar.SECOND, 0);
         alarmCalendar.set(Calendar.MILLISECOND, 0);
 
+        if(alarmCalendar.getTimeInMillis() < System.currentTimeMillis()) {
+            alarmCalendar.add(Calendar.HOUR, 24);
+        }
+
         return alarmCalendar;
     }
 
     public static void setAlarm(@NonNull final Context context) {
+        final Calendar alarmCalendar = getAlarmCalendar();
+
         if (!alarmExists(context)) {
-            final Calendar alarmCalendar = getAlarmCalendar();
             final PendingIntent pendingIntent = getPendingIntent(context);
 
             final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
@@ -49,18 +56,34 @@ public class AlarmHelper {
     }
 
     private static boolean alarmExists(@NonNull final Context context) {
-        final Intent alarmReceiverIntent = AlarmReceiver.getAlarmReceiverIntent(context);
-        return PendingIntent
-                .getBroadcast(
-                        context,
-                        PENDING_INTENT_REQUEST_CODE,
-                        alarmReceiverIntent,
-                        PendingIntent.FLAG_NO_CREATE)
-                != null;
+        final Intent alarmIntentService = WeatherCheckService.getAlarmIntentService(context);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return PendingIntent
+                    .getForegroundService(
+                            context,
+                            PENDING_INTENT_REQUEST_CODE,
+                            alarmIntentService,
+                            PendingIntent.FLAG_NO_CREATE)
+                    != null;
+        } else {
+            return PendingIntent
+                    .getService(
+                            context,
+                            PENDING_INTENT_REQUEST_CODE,
+                            alarmIntentService,
+                            PendingIntent.FLAG_NO_CREATE)
+                    != null;
+        }
     }
 
     private static PendingIntent getPendingIntent(@NonNull final Context context) {
-        final Intent alarmReceiverIntent = AlarmReceiver.getAlarmReceiverIntent(context);
-        return PendingIntent.getBroadcast(context, PENDING_INTENT_REQUEST_CODE, alarmReceiverIntent, 0);
+        final Intent alarmIntentService = WeatherCheckService.getAlarmIntentService(context);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return PendingIntent.getForegroundService(context, PENDING_INTENT_REQUEST_CODE, alarmIntentService, 0);
+        } else {
+            return PendingIntent.getService(context, PENDING_INTENT_REQUEST_CODE, alarmIntentService, 0);
+        }
     }
 }

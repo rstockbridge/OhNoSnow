@@ -1,10 +1,11 @@
 package com.github.rstockbridge.ohnosnow.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -14,8 +15,9 @@ import android.widget.TextView;
 
 import com.github.rstockbridge.ohnosnow.R;
 import com.github.rstockbridge.ohnosnow.alarm.AlarmHelper;
-import com.github.rstockbridge.ohnosnow.utils.LocationPermissionUtil;
 import com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper;
+
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.NotificationPref;
 import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.NotificationPref.NONE;
@@ -37,7 +39,7 @@ public final class MainActivity
 
         initializeViews();
 
-        if (!LocationPermissionUtil.locationPermissionGranted(this)) {
+        if (!EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
             final Intent intent = new Intent(this, LocationPermissionActivity.class);
             startActivityForResult(intent, REQUEST_CODE_LOCATION_PERMISSION_FLOW_COMPLETE);
         }
@@ -47,15 +49,12 @@ public final class MainActivity
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            case REQUEST_CODE_LOCATION_PERMISSION_FLOW_COMPLETE:
-                if (resultCode == RESULT_OK) {
-                    syncViewsWithLocationPermission(LocationPermissionUtil.locationPermissionGranted(this));
-                }
-                break;
-
-            default:
-                throw new IllegalStateException("This line should not be reached.");
+        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION_FLOW_COMPLETE) {
+            if (resultCode == RESULT_OK) {
+                syncViewsWithLocationPermission(EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION));
+            }
+        } else {
+            throw new IllegalStateException("This line should not be reached.");
         }
     }
 
@@ -66,7 +65,7 @@ public final class MainActivity
 
         if (selectedNotificationPref == NONE) {
             AlarmHelper.cancelAlarm(this);
-        } else if (LocationPermissionUtil.locationPermissionGranted(this)) {
+        } else if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
             AlarmHelper.setAlarm(this);
         }
     }
@@ -90,14 +89,11 @@ public final class MainActivity
         spinner.setOnItemSelectedListener(this);
 
         final ImageView darkSkyAttribution = findViewById(R.id.darkSkyAttribution);
-        darkSkyAttribution.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                final String url = "https://darksky.net/poweredby/";
-                final Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(url));
-                startActivity(intent);
-            }
+        darkSkyAttribution.setOnClickListener(v -> {
+            final String url = "https://darksky.net/poweredby/";
+            final Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse(url));
+            startActivity(intent);
         });
     }
 

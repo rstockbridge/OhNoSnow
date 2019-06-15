@@ -8,42 +8,41 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.github.rstockbridge.ohnosnow.R;
-import com.github.rstockbridge.ohnosnow.activities.LocationSettingsActivity;
+import com.github.rstockbridge.ohnosnow.activities.LocationPermissionActivity;
 
-import static com.github.rstockbridge.ohnosnow.activities.LocationSettingsActivity.EXTRA_RESOLVABLE_PENDING_INTENT;
+public class LocationPermissionNotification {
 
-public final class LocationSettingsNotification {
-
-    private static final int NOTIFICATION_ID = 3018;
+    private static final int NOTIFICATION_ID = 6192;
 
     private static NotificationCompat.Builder getNotificationBuilder(@NonNull final Context context) {
         return new NotificationCompat.Builder(context, NotificationChannelUtil.PRIMARY_CHANNEL_ID)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(R.string.location_off)))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(R.string.location_permission_not_granted)))
                 .setContentTitle(context.getString(R.string.failed_weather_data))
-                .setContentText(context.getString(R.string.location_off))
+                .setContentText(context.getString(R.string.location_permission_not_granted))
                 .setSmallIcon(R.drawable.ic_app_icon)
                 .setAutoCancel(true);
     }
 
-    public static void sendNotification(@NonNull final Context context, @NonNull final PendingIntent resolvablePendingIntent) {
+    public static void sendNotification(@NonNull final Context context) {
         final NotificationManager notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationChannelUtil.createNotificationChannel(notificationManager);
 
-        final Intent locationSettingsIntent = new Intent(context, LocationSettingsActivity.class);
-        locationSettingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        locationSettingsIntent.putExtra(EXTRA_RESOLVABLE_PENDING_INTENT, resolvablePendingIntent);
+        final Intent locationPermissionIntent = new Intent(context, LocationPermissionActivity.class);
+        locationPermissionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-        final PendingIntent locationSettingsPendingIntent =
+        final PendingIntent locationPermissionPendingIntent =
                 PendingIntent.getActivity(
                         context,
                         0,
-                        locationSettingsIntent,
+                        locationPermissionIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
 
         final NotificationCompat.Builder notificationBuilder = getNotificationBuilder(context);
-        notificationBuilder.setContentIntent(locationSettingsPendingIntent);
+        notificationBuilder.setContentIntent(locationPermissionPendingIntent);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 }
+
+

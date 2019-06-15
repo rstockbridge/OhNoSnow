@@ -1,6 +1,6 @@
 package com.github.rstockbridge.ohnosnow.api;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.github.rstockbridge.ohnosnow.api.models.ForecastData;
 

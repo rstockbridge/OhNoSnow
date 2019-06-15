@@ -1,6 +1,6 @@
 package com.github.rstockbridge.ohnosnow.api;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

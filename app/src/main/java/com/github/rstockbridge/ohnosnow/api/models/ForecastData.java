@@ -1,6 +1,6 @@
 package com.github.rstockbridge.ohnosnow.api.models;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.squareup.moshi.Json;
 

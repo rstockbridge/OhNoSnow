@@ -3,9 +3,9 @@ package com.github.rstockbridge.ohnosnow.activities;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.rstockbridge.ohnosnow.BuildConfig;
 import com.github.rstockbridge.ohnosnow.R;
@@ -38,14 +38,11 @@ public final class LocationPermissionActivity
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            // occurs when Easy Permissions directs the user to the app settings directly
-            case AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE:
-                myFinish();
-                break;
-
-            default:
-                throw new IllegalStateException("This line should not be reached.");
+        // occurs when Easy Permissions directs the user to the app settings directly
+        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
+            myFinish();
+        } else {
+            throw new IllegalStateException("This line should not be reached.");
         }
     }
 
@@ -67,17 +64,14 @@ public final class LocationPermissionActivity
 
     @Override
     public void onPermissionsDenied(final int requestCode, @NonNull final List<String> perms) {
-        switch (requestCode) {
-            case REQUEST_CODE_LOCATION_PERMISSION:
-                if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-                    new AppSettingsDialog.Builder(this).build().show();
-                } else {
-                    myFinish();
-                }
-                break;
-
-            default:
-                throw new IllegalStateException("This line should not be reached.");
+        if (requestCode == REQUEST_CODE_LOCATION_PERMISSION) {
+            if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+                new AppSettingsDialog.Builder(this).build().show();
+            } else {
+                myFinish();
+            }
+        } else {
+            throw new IllegalStateException("This line should not be reached.");
         }
     }
 
