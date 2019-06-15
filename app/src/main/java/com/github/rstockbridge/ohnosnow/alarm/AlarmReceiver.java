@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.github.rstockbridge.ohnosnow.BuildConfig;
@@ -55,7 +54,7 @@ public class AlarmReceiver
             }
         };
 
-        locationUtil.requestLocation(context, this);
+        locationUtil.attemptGettingLastLocation(context, this);
     }
 
     @Override
