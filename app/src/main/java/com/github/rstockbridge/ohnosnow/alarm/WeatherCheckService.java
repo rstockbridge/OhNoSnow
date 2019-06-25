@@ -34,9 +34,15 @@ import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.getN
 
 public class WeatherCheckService extends Service {
 
+    // do not respond to alarm if user does not want any notifications
+    // still report errors if user requests snow-only notifications
+
+
     public static Intent getAlarmIntentService(@NonNull final Context context) {
         return new Intent(context, WeatherCheckService.class);
     }
+
+    final SharedPreferenceHelper.NotificationPref notificationPref = getNotificationPref(WeatherCheckService.this);
 
     private final CompositeDisposable disposable = new CompositeDisposable();
 
@@ -47,7 +53,6 @@ public class WeatherCheckService extends Service {
         public void onSuccess(@NonNull final ForecastData result) {
             final double snowInInches = result.get12HourSnowInInches();
 
-            final SharedPreferenceHelper.NotificationPref notificationPref = getNotificationPref(WeatherCheckService.this);
             if ((notificationPref == SharedPreferenceHelper.NotificationPref.SNOW_AND_FAILURE_ONLY && snowInInches > 0.75)
                     || notificationPref == SharedPreferenceHelper.NotificationPref.ALL) {
                 WeatherNotification.sendNotification(WeatherCheckService.this, snowInInches);
@@ -74,13 +79,15 @@ public class WeatherCheckService extends Service {
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         startForeground(1, FetchingNotification.getNotification(this));
 
-        if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-            locationUtil = new LocationUtil(this);
+        if (notificationPref != SharedPreferenceHelper.NotificationPref.NONE) {
+            if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                locationUtil = new LocationUtil(this);
 
-            startLocationFlow();
-        } else {
-            LocationPermissionNotification.sendNotification(this);
-            stopSelf();
+                startLocationFlow();
+            } else {
+                LocationPermissionNotification.sendNotification(this);
+                stopSelf();
+            }
         }
 
         return super.onStartCommand(intent, flags, startId);
