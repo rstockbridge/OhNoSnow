@@ -37,12 +37,11 @@ public class WeatherCheckService extends Service {
     // do not respond to alarm if user does not want any notifications
     // still report errors if user requests snow-only notifications
 
-
     public static Intent getAlarmIntentService(@NonNull final Context context) {
         return new Intent(context, WeatherCheckService.class);
     }
 
-    final SharedPreferenceHelper.NotificationPref notificationPref = getNotificationPref(WeatherCheckService.this);
+    private SharedPreferenceHelper.NotificationPref notificationPref;
 
     private final CompositeDisposable disposable = new CompositeDisposable();
 
@@ -78,6 +77,8 @@ public class WeatherCheckService extends Service {
     @Override
     public int onStartCommand(final Intent intent, final int flags, final int startId) {
         startForeground(1, FetchingNotification.getNotification(this));
+
+        notificationPref = getNotificationPref(WeatherCheckService.this);
 
         if (notificationPref != SharedPreferenceHelper.NotificationPref.NONE) {
             if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
