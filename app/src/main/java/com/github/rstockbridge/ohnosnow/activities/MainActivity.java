@@ -1,11 +1,8 @@
 package com.github.rstockbridge.ohnosnow.activities;
 
-import android.Manifest;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,11 +10,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.github.rstockbridge.ohnosnow.R;
 import com.github.rstockbridge.ohnosnow.alarm.AlarmHelper;
+import com.github.rstockbridge.ohnosnow.utils.EasyPermissionsHelper;
 import com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper;
-
-import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.NotificationPref;
 import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.NotificationPref.NONE;
@@ -39,7 +38,7 @@ public final class MainActivity
 
         initializeViews();
 
-        if (!EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (!EasyPermissionsHelper.allTheTimeLocationAccessGranted(this)) {
             final Intent intent = new Intent(this, LocationPermissionActivity.class);
             startActivityForResult(intent, REQUEST_CODE_LOCATION_PERMISSION_FLOW_COMPLETE);
         }
@@ -51,7 +50,7 @@ public final class MainActivity
 
         if (requestCode == REQUEST_CODE_LOCATION_PERMISSION_FLOW_COMPLETE) {
             if (resultCode == RESULT_OK) {
-                syncViewsWithLocationPermission(EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION));
+                syncViewsWithLocationPermission(EasyPermissionsHelper.allTheTimeLocationAccessGranted(this));
             }
         } else {
             throw new IllegalStateException("This line should not be reached.");
@@ -65,7 +64,7 @@ public final class MainActivity
 
         if (selectedNotificationPref == NONE) {
             AlarmHelper.cancelAlarm(this);
-        } else if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+        } else if (EasyPermissionsHelper.allTheTimeLocationAccessGranted(this)) {
             AlarmHelper.setAlarm(this);
         }
     }

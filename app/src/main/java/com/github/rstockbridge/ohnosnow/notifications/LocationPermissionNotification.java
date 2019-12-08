@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
@@ -15,10 +17,18 @@ public class LocationPermissionNotification {
     private static final int NOTIFICATION_ID = 6192;
 
     private static NotificationCompat.Builder getNotificationBuilder(@NonNull final Context context) {
+        String message = "";
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            message = context.getString(R.string.all_the_time_location_permission_not_granted);
+        } else {
+            message = context.getString(R.string.foreground_location_permission_not_granted);
+        }
+
         return new NotificationCompat.Builder(context, NotificationChannelUtil.PRIMARY_CHANNEL_ID)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(context.getString(R.string.location_permission_not_granted)))
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setContentTitle(context.getString(R.string.failed_weather_data))
-                .setContentText(context.getString(R.string.location_permission_not_granted))
+                .setContentText(message)
                 .setSmallIcon(R.drawable.ic_app_icon)
                 .setAutoCancel(true);
     }

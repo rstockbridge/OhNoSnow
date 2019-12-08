@@ -1,11 +1,13 @@
 <resources>
     <string name="app_name">Oh No, Snow!</string>
     <string name="snowtifications">Snowtifications</string>
-    <string name="location_permission_rationale">This app requires Location Permission to function.</string>
+    <string name="foreground_location_permission_rationale">This app requires location permission to function.</string>
+    <string name="all_the_time_location_permission_rationale">This app requires all-the-time location access to function.</string>
     <string name="ok">OK</string>
     <string name="fetching">Fetching Weather…</string>
     <string name="failed_weather_data">Failed to retrieve weather data :(</string>
-    <string name="location_permission_not_granted">Missing location permission! Tap to fix this for tomorrow.</string>
+    <string name="foreground_location_permission_not_granted">Missing location permission! Tap to fix this for tomorrow.</string>
+    <string name="all_the_time_location_permission_not_granted">Missing all-the-time location access! Tap to fix this for tomorrow.</string>
     <string name="location_off">Location is off! Tap to fix this for tomorrow.</string>
     <string name="location_failed">Could Not Determine Location!</string>
     <string name="tap_to_continue">Tap to continue.</string>

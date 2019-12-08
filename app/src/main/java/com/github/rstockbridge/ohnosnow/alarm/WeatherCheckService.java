@@ -1,6 +1,5 @@
 package com.github.rstockbridge.ohnosnow.alarm;
 
-import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -22,13 +21,13 @@ import com.github.rstockbridge.ohnosnow.notifications.FetchingNotification;
 import com.github.rstockbridge.ohnosnow.notifications.LocationPermissionNotification;
 import com.github.rstockbridge.ohnosnow.notifications.LocationSettingsNotification;
 import com.github.rstockbridge.ohnosnow.notifications.WeatherNotification;
+import com.github.rstockbridge.ohnosnow.utils.EasyPermissionsHelper;
 import com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import pub.devrel.easypermissions.EasyPermissions;
 
 import static com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper.getNotificationPref;
 
@@ -81,7 +80,7 @@ public class WeatherCheckService extends Service {
         notificationPref = getNotificationPref(WeatherCheckService.this);
 
         if (notificationPref != SharedPreferenceHelper.NotificationPref.NONE) {
-            if (EasyPermissions.hasPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (EasyPermissionsHelper.allTheTimeLocationAccessGranted(this)) {
                 locationUtil = new LocationUtil(this);
 
                 startLocationFlow();
@@ -133,7 +132,9 @@ public class WeatherCheckService extends Service {
 
     @Override
     public void onDestroy() {
-        locationUtil.removeLocationUpdates();
+        if (locationUtil != null) {
+            locationUtil.removeLocationUpdates();
+        }
         disposable.dispose();
         super.onDestroy();
     }

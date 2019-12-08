@@ -2,12 +2,14 @@ package com.github.rstockbridge.ohnosnow.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.rstockbridge.ohnosnow.BuildConfig;
 import com.github.rstockbridge.ohnosnow.R;
 
 import java.util.List;
@@ -21,10 +23,6 @@ public final class LocationPermissionActivity
         implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_CODE_LOCATION_PERMISSION = 5713;
-
-    public static final String ACTION_LOCATION_PERMISSION_BROADCAST =
-            BuildConfig.APPLICATION_ID + ".ACTION_LOCATION_SETTINGS_BROADCAST";
-
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -76,15 +74,32 @@ public final class LocationPermissionActivity
     }
 
     private void requestLocationPermissions() {
-        EasyPermissions.requestPermissions(
-                new PermissionRequest.Builder(
-                        this,
-                        REQUEST_CODE_LOCATION_PERMISSION,
-                        Manifest.permission.ACCESS_FINE_LOCATION)
-                        .setRationale(R.string.location_permission_rationale)
-                        .setPositiveButtonText(R.string.ok)
-                        .setNegativeButtonText("") // negative button is unnecessary here
-                        .build());
+        final PermissionRequest.Builder builder;
+        @StringRes final int rationale;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            builder = new PermissionRequest.Builder(
+                    this,
+                    REQUEST_CODE_LOCATION_PERMISSION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+
+            rationale = R.string.all_the_time_location_permission_rationale;
+
+        } else {
+            builder = new PermissionRequest.Builder(
+                    this,
+                    REQUEST_CODE_LOCATION_PERMISSION,
+                    Manifest.permission.ACCESS_FINE_LOCATION);
+
+            rationale = R.string.foreground_location_permission_rationale;
+        }
+
+        EasyPermissions.requestPermissions(builder
+                .setRationale(rationale)
+                .setPositiveButtonText(R.string.ok)
+                .setNegativeButtonText("") // negative button is unnecessary here
+                .build());
     }
 
     private void myFinish() {
