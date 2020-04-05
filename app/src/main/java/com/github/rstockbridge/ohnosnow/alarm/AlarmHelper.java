@@ -26,7 +26,7 @@ public class AlarmHelper {
         alarmCalendar.set(Calendar.MILLISECOND, 0);
 
         if (alarmCalendar.getTimeInMillis() < System.currentTimeMillis()) {
-            alarmCalendar.add(Calendar.HOUR, 24);
+            alarmCalendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
         return alarmCalendar;
