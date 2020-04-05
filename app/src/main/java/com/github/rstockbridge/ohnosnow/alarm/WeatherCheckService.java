@@ -1,5 +1,6 @@
 package com.github.rstockbridge.ohnosnow.alarm;
 
+import android.app.AlarmManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -80,6 +81,8 @@ public class WeatherCheckService extends Service {
         notificationPref = getNotificationPref(WeatherCheckService.this);
 
         if (notificationPref != SharedPreferenceHelper.NotificationPref.NONE) {
+            AlarmHelper.setNextAlarm(this);
+
             if (EasyPermissionsHelper.allTheTimeLocationAccessGranted(this)) {
                 locationUtil = new LocationUtil(this);
 

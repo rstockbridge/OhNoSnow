@@ -65,7 +65,7 @@ public final class MainActivity
         if (selectedNotificationPref == NONE) {
             AlarmHelper.cancelAlarm(this);
         } else if (EasyPermissionsHelper.allTheTimeLocationAccessGranted(this)) {
-            AlarmHelper.setAlarm(this);
+            AlarmHelper.setNextAlarm(this);
         }
     }
 

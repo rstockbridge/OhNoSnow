@@ -17,33 +17,33 @@ public class AlarmHelper {
     private static final int PENDING_INTENT_REQUEST_CODE = 7293;
     private static final int NOTIFICATION_HOUR = 19;
 
-    private static Calendar getAlarmCalendar() {
-        final Calendar alarmCalendar = Calendar.getInstance();
+    private static long computeNextAlarmTimeMillis() {
+        final Calendar calendar = Calendar.getInstance();
 
-        alarmCalendar.set(Calendar.HOUR_OF_DAY, NOTIFICATION_HOUR);
-        alarmCalendar.set(Calendar.MINUTE, 0);
-        alarmCalendar.set(Calendar.SECOND, 0);
-        alarmCalendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, NOTIFICATION_HOUR);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
-        if (alarmCalendar.getTimeInMillis() < System.currentTimeMillis()) {
-            alarmCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        return alarmCalendar;
+        return calendar.getTimeInMillis();
     }
 
-    public static void setAlarm(@NonNull final Context context) {
-        final Calendar alarmCalendar = getAlarmCalendar();
+    public static void setNextAlarm(@NonNull final Context context) {
+        final long nextAlarmTimeMillis = computeNextAlarmTimeMillis();
 
         final PendingIntent pendingIntent = getPendingIntent(context);
 
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
-        alarmManager.setRepeating(
+        alarmManager.set(
                 AlarmManager.RTC,
-                alarmCalendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY,
-                pendingIntent);
+                nextAlarmTimeMillis,
+                pendingIntent
+        );
     }
 
     public static void cancelAlarm(@NonNull final Context context) {

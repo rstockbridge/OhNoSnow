@@ -16,7 +16,7 @@ public class BootReceiver extends BroadcastReceiver {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             if (EasyPermissions.hasPermissions(context, Manifest.permission.ACCESS_FINE_LOCATION)
                     && getNotificationPref(context) != NotificationPref.NONE) {
-                AlarmHelper.setAlarm(context);
+                AlarmHelper.setNextAlarm(context);
             }
         }
     }
