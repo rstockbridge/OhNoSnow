@@ -35,17 +35,15 @@ public class AlarmHelper {
     public static void setAlarm(@NonNull final Context context) {
         final Calendar alarmCalendar = getAlarmCalendar();
 
-        if (!alarmExists(context)) {
-            final PendingIntent pendingIntent = getPendingIntent(context);
+        final PendingIntent pendingIntent = getPendingIntent(context);
 
-            final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
-            alarmManager.setRepeating(
-                    AlarmManager.RTC,
-                    alarmCalendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY,
-                    pendingIntent);
-        }
+        alarmManager.setRepeating(
+                AlarmManager.RTC,
+                alarmCalendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent);
     }
 
     public static void cancelAlarm(@NonNull final Context context) {
@@ -53,28 +51,6 @@ public class AlarmHelper {
         final PendingIntent pendingIntent = getPendingIntent(context);
         alarmManager.cancel(pendingIntent);
         pendingIntent.cancel();
-    }
-
-    private static boolean alarmExists(@NonNull final Context context) {
-        final Intent alarmIntentService = WeatherCheckService.getAlarmIntentService(context);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            return PendingIntent
-                    .getForegroundService(
-                            context,
-                            PENDING_INTENT_REQUEST_CODE,
-                            alarmIntentService,
-                            PendingIntent.FLAG_NO_CREATE)
-                    != null;
-        } else {
-            return PendingIntent
-                    .getService(
-                            context,
-                            PENDING_INTENT_REQUEST_CODE,
-                            alarmIntentService,
-                            PendingIntent.FLAG_NO_CREATE)
-                    != null;
-        }
     }
 
     private static PendingIntent getPendingIntent(@NonNull final Context context) {
