@@ -30,6 +30,7 @@ public final class MainActivity
 
     private TextView label;
     private Spinner spinner;
+    private AlarmHelper alarmHelper;
 
     @Override
     protected void onCreate(@Nullable final Bundle savedInstanceState) {
@@ -37,6 +38,8 @@ public final class MainActivity
         setContentView(R.layout.activity_main);
 
         initializeViews();
+
+        alarmHelper = new AlarmHelper(this);
 
         if (!EasyPermissionsHelper.allTheTimeLocationAccessGranted(this)) {
             final Intent intent = new Intent(this, LocationPermissionActivity.class);
@@ -63,9 +66,9 @@ public final class MainActivity
         SharedPreferenceHelper.setNotificationPref(this, selectedNotificationPref);
 
         if (selectedNotificationPref == NONE) {
-            AlarmHelper.cancelAlarm(this);
+            alarmHelper.cancelAlarm();
         } else if (EasyPermissionsHelper.allTheTimeLocationAccessGranted(this)) {
-            AlarmHelper.setNextAlarm(this);
+            alarmHelper.setNextAlarm();
         }
     }
 

@@ -15,7 +15,7 @@ public class TimeZoneChangeReceiver extends BroadcastReceiver {
         //   The existing pending alarm will be canceled
         //   And the next alarm will be scheduled for 23.5 hours in the future
         //   And no alarm will fire for the current calendar day.
-        AlarmHelper.setNextAlarm(context);
+        new AlarmHelper(context).setNextAlarm();
     }
 
 }

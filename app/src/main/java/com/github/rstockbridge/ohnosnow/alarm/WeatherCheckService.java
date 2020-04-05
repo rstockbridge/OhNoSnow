@@ -81,7 +81,7 @@ public class WeatherCheckService extends Service {
         notificationPref = getNotificationPref(WeatherCheckService.this);
 
         if (notificationPref != SharedPreferenceHelper.NotificationPref.NONE) {
-            AlarmHelper.setNextAlarm(this);
+            new AlarmHelper(this).setNextAlarm();
 
             if (EasyPermissionsHelper.allTheTimeLocationAccessGranted(this)) {
                 locationUtil = new LocationUtil(this);

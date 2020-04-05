@@ -7,37 +7,57 @@ import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
+import com.github.rstockbridge.ohnosnow.utils.Clock;
+import com.github.rstockbridge.ohnosnow.utils.SystemClock;
 
 import java.util.Calendar;
-
-import static android.content.Context.ALARM_SERVICE;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class AlarmHelper {
 
     private static final int PENDING_INTENT_REQUEST_CODE = 7293;
     private static final int NOTIFICATION_HOUR = 19;
 
-    private static long computeNextAlarmTimeMillis() {
-        final Calendar calendar = Calendar.getInstance();
+    @NonNull
+    private final AlarmManager alarmManager;
 
-        calendar.set(Calendar.HOUR_OF_DAY, NOTIFICATION_HOUR);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
+    @NonNull
+    private final Clock clock;
 
-        if (calendar.getTimeInMillis() < System.currentTimeMillis()) {
-            calendar.add(Calendar.DAY_OF_MONTH, 1);
-        }
+    @NonNull
+    private final Context context;
 
-        return calendar.getTimeInMillis();
+    public AlarmHelper(@NonNull final Context context) {
+        this(
+                (AlarmManager) context.getSystemService(Context.ALARM_SERVICE),
+                new SystemClock(),
+                context
+        );
     }
 
-    public static void setNextAlarm(@NonNull final Context context) {
-        final long nextAlarmTimeMillis = computeNextAlarmTimeMillis();
+    @VisibleForTesting
+    AlarmHelper(
+            @NonNull final AlarmManager alarmManager,
+            @NonNull final Clock clock,
+            @NonNull final Context context
+    ) {
+        this.alarmManager = alarmManager;
+        this.clock = clock;
+        this.context = context;
+    }
 
-        final PendingIntent pendingIntent = getPendingIntent(context);
+    public void setNextAlarm() {
+        setNextAlarm(TimeZone.getDefault());
+    }
 
-        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+    @VisibleForTesting
+    void setNextAlarm(@NonNull final TimeZone timeZone) {
+        final long nextAlarmTimeMillis = computeNextAlarmTimeMillis(timeZone);
+
+        final PendingIntent pendingIntent = getPendingIntent();
 
         alarmManager.set(
                 AlarmManager.RTC,
@@ -46,14 +66,29 @@ public class AlarmHelper {
         );
     }
 
-    public static void cancelAlarm(@NonNull final Context context) {
-        final AlarmManager alarmManager = (AlarmManager) context.getSystemService(ALARM_SERVICE);
-        final PendingIntent pendingIntent = getPendingIntent(context);
+    public void cancelAlarm() {
+        final PendingIntent pendingIntent = getPendingIntent();
         alarmManager.cancel(pendingIntent);
         pendingIntent.cancel();
     }
 
-    private static PendingIntent getPendingIntent(@NonNull final Context context) {
+    private long computeNextAlarmTimeMillis(@NonNull final TimeZone timeZone) {
+        final Calendar calendar = Calendar.getInstance(timeZone);
+        calendar.setTime(new Date(clock.getCurrentMillis()));
+
+        calendar.set(Calendar.HOUR_OF_DAY, NOTIFICATION_HOUR);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        if (calendar.getTimeInMillis() < clock.getCurrentMillis()) {
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        return calendar.getTimeInMillis();
+    }
+
+    private PendingIntent getPendingIntent() {
         final Intent alarmIntentService = WeatherCheckService.getAlarmIntentService(context);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
