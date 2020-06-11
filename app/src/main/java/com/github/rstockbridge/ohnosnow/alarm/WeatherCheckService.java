@@ -8,7 +8,6 @@ import android.os.IBinder;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.crashlytics.android.Crashlytics;
 import com.github.rstockbridge.ohnosnow.BuildConfig;
 import com.github.rstockbridge.ohnosnow.api.DarkSkyApi;
 import com.github.rstockbridge.ohnosnow.api.MyCallback;
@@ -23,6 +22,7 @@ import com.github.rstockbridge.ohnosnow.notifications.LocationSettingsNotificati
 import com.github.rstockbridge.ohnosnow.notifications.WeatherNotification;
 import com.github.rstockbridge.ohnosnow.utils.EasyPermissionsHelper;
 import com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -67,7 +67,7 @@ public class WeatherCheckService extends Service {
 
         @Override
         public void onFailure(@NonNull final Throwable t) {
-            Crashlytics.logException(t);
+            FirebaseCrashlytics.getInstance().recordException(t);
             FailureNotification.sendNotification(WeatherCheckService.this);
             stopSelf();
         }
