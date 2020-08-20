@@ -10,7 +10,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
 final class RetrofitWrapper {
 
     private static Retrofit retrofit;
-    private static final String BASE_URL = "https://api.darksky.net/forecast/";
+    private static final String BASE_URL = "https://api.climacell.co/";
 
     private RetrofitWrapper() {
     }

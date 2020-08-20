@@ -1,18 +1,22 @@
 package com.github.rstockbridge.ohnosnow.api.models;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 
-class Forecast {
+import com.squareup.moshi.Json;
 
-    @Nullable
-    private Double precipAccumulation;
+public class Forecast {
 
-    @Nullable
-    private String precipType;
+    @NonNull
+    private Precipitation precipitation;
 
-    double getSnowAccumulation() {
-        if (precipAccumulation != null && precipType.equals("snow")) {
-            return precipAccumulation;
+    @Json(name = "precipitation_type")
+    @NonNull
+    private PrecipitationType precipitationType;
+
+
+    public double getSnowAccumulation() {
+        if (precipitationType.isSnow()) {
+            return precipitation.getAmount();
         } else {
             return 0;
         }

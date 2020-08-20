@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.github.rstockbridge.ohnosnow.BuildConfig;
-import com.github.rstockbridge.ohnosnow.api.DarkSkyApi;
+import com.github.rstockbridge.ohnosnow.api.ClimaCellApi;
 import com.github.rstockbridge.ohnosnow.api.MyCallback;
-import com.github.rstockbridge.ohnosnow.api.models.ForecastData;
+import com.github.rstockbridge.ohnosnow.api.models.Forecast;
 import com.github.rstockbridge.ohnosnow.location.LocationSettingsState;
 import com.github.rstockbridge.ohnosnow.location.LocationUtil;
 import com.github.rstockbridge.ohnosnow.location.MyLocationResult;
@@ -23,6 +23,8 @@ import com.github.rstockbridge.ohnosnow.notifications.WeatherNotification;
 import com.github.rstockbridge.ohnosnow.utils.EasyPermissionsHelper;
 import com.github.rstockbridge.ohnosnow.utils.SharedPreferenceHelper;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -46,10 +48,10 @@ public class WeatherCheckService extends Service {
 
     private LocationUtil locationUtil;
 
-    private MyCallback<ForecastData> myCallback = new MyCallback<ForecastData>() {
+    private MyCallback<List<Forecast>> myCallback = new MyCallback<List<Forecast>>() {
         @Override
-        public void onSuccess(@NonNull final ForecastData result) {
-            final double snowInInches = result.get12HourSnowInInches();
+        public void onSuccess(@NonNull final List<Forecast> result) {
+            final double snowInInches = get12HourSnowInInches(result);
 
             if ((notificationPref == SharedPreferenceHelper.NotificationPref.SNOW_AND_FAILURE_ONLY && snowInInches > 0.75)
                     || notificationPref == SharedPreferenceHelper.NotificationPref.ALL) {
@@ -108,7 +110,7 @@ public class WeatherCheckService extends Service {
                     final String latitude = locationUtil.getLatitudeAsString(locationResult.getLocation());
                     final String longitude = locationUtil.getLongitudeAsString(locationResult.getLocation());
 
-                    DarkSkyApi.getSharedInstance().fetchForecast(BuildConfig.DARK_SKY_KEY, latitude, longitude, myCallback);
+                    ClimaCellApi.getSharedInstance().fetchForecasts(BuildConfig.CLIMA_CELL_KEY, latitude, longitude, myCallback);
                 } else if (locationResult.getLocationSettingsState() == LocationSettingsState.RESOLUTION_REQUIRED) {
                     LocationSettingsNotification.sendNotification(WeatherCheckService.this, locationResult.getResolvableApiException().getResolution());
                     stopSelf();
@@ -145,5 +147,15 @@ public class WeatherCheckService extends Service {
     @Override
     public IBinder onBind(final Intent intent) {
         return null;
+    }
+
+    private double get12HourSnowInInches(@NonNull final List<Forecast> forecasts) {
+        double snowInInches = 0;
+
+        for (int i = 0; i < 12; i++) {
+            snowInInches += forecasts.get(i).getSnowAccumulation();
+        }
+
+        return (double) Math.round(snowInInches * 10) / 10;
     }
 }

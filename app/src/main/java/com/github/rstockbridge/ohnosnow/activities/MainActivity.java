@@ -90,9 +90,9 @@ public final class MainActivity
         spinner.setSelection(getNotificationPref(this).ordinal());
         spinner.setOnItemSelectedListener(this);
 
-        final ImageView darkSkyAttribution = findViewById(R.id.darkSkyAttribution);
-        darkSkyAttribution.setOnClickListener(v -> {
-            final String url = "https://darksky.net/poweredby/";
+        final TextView climaCellAttribution = findViewById(R.id.climaCellAttribution);
+        climaCellAttribution.setOnClickListener(v -> {
+            final String url = "https://www.climacell.co/weather-api/";
             final Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse(url));
             startActivity(intent);

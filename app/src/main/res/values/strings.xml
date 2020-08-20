@@ -13,5 +13,5 @@
     <string name="tap_to_continue">Tap to continue.</string>
     <string name="uh_oh">Uh Oh!</string>
     <string name="weather_update">Weather Update</string>
-    <string name="powered_by_dark_sky">Powered by Dark Sky.</string>
+    <string name="powered_by_climacell">Powered by ClimaCell.</string>
 </resources>
