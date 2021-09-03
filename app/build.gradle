@@ -6,15 +6,11 @@ android {
     compileSdkVersion 30
     defaultConfig {
         applicationId "com.github.rstockbridge.ohnosnow"
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdk 21
+        targetSdk 30
         versionCode 2
         versionName "1.1"
         buildConfigField "String", "CLIMA_CELL_KEY", climaCellKey
-    }
-    compileOptions {
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
     }
 
     testOptions {
@@ -23,18 +19,18 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     implementation 'pub.devrel:easypermissions:3.0.0'
-    implementation 'com.google.android.gms:play-services-location:17.1.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-moshi:2.6.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.0'
-    implementation 'com.google.firebase:firebase-core:18.0.0'
-    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
-    implementation 'com.google.firebase:firebase-analytics:18.0.0'
+    implementation 'com.google.firebase:firebase-core:19.0.1'
+    implementation 'com.google.firebase:firebase-crashlytics:18.2.1'
+    implementation 'com.google.firebase:firebase-analytics:19.0.1'
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.mockito:mockito-core:2.28.2'
 }
